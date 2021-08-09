@@ -3,15 +3,16 @@ package main
 import (
 	"./pattern"
 	"bufio"
-	"os"
-	"strings"
-
-	//"errors"
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 )
 
 func main() {
+
+
+
 
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -21,23 +22,29 @@ func main() {
 	fmt.Println("enter the number of columns  for a matrix")
 	scanner.Scan()
 	col, _ := strconv.Atoi(scanner.Text())
-
-
-	//pt := pattern.Point{
-	//				I: 5,
-	//				J: 2,
-	//			}
-	////x:=pattern.DrawSquare(input,pt,1)
-	//x:=pattern.DrawRectangle(input,pt,4,11)
-	//if x!=-1{
-	//	fmt.Println("Number of square which can be drawn from that point is %d",x)
-	//	print(input)
-	//}else{
-	//	fmt.Println("cant draw a square")
-	//}
+	//	input := make([][]int, row)
+	//	for i := 0; i < len(input); i++ {
+	//		input[i] = make([]int,col)
+	//	}
 
 
 
+	//				pt := pattern.Point{
+	//					I: 0,
+	//					J: 4,
+	//				}
+	//
+	//				parentRectangle:=pattern.Pattern{
+	//					Name: "rectangle",
+	//				}
+	//				rectObj:=pattern.Rectangle{
+	//					Pattern: parentRectangle,
+	//					Point:   pt,
+	//					Length:  2,
+	//					Breadth: 1,
+	//				}
+	//				pattern.Info(rectObj,input)
+	//rectObj.Pattern.Print(input)
 
 
 	for {
@@ -66,10 +73,27 @@ func main() {
 					scanner.Scan()
 					sqLength, _ := strconv.Atoi(scanner.Text())
 
-					numberSquare:=pattern.DrawSquare(input, pt, sqLength)
+					parentSquare:=pattern.Pattern{
+						Name: "square",
+					}
+					r:=pattern.Rectangle{
+						Pattern: parentSquare,
+						Point:   pt,
+						Length:  sqLength,
+						Breadth: sqLength,
+					}
+					sqObj:=pattern.Square{
+						Rectangle: r,
+						Pattern:    parentSquare,
+						Point:      pt,
+						SideLength: sqLength,
+					}
+					numberSquare:=pattern.Info(sqObj,input)
+
+
 					if numberSquare!=-1{
 						fmt.Println("Number of square which can be drawn from that point is ",numberSquare)
-						print(input)
+						sqObj.Pattern.Print(input)
 					}else{
 						fmt.Println("cant draw a square")
 					}
@@ -100,10 +124,19 @@ func main() {
 					scanner.Scan()
 					radius, _ := strconv.Atoi(scanner.Text())
 
-					numberCircle:=pattern.DrawCircle(radius,input,pt)
+					parentSquare:=pattern.Pattern{
+						Name: "circle",
+					}
+
+					circleObj:=pattern.Circle{
+						Pattern: parentSquare,
+						Point:   pt,
+						Radius: radius,
+					}
+					numberCircle:=pattern.Info(circleObj,input)
 					if numberCircle!=-1{
 						fmt.Println("Number of square which can be drawn from that point is ",numberCircle)
-						print(input)
+						circleObj.Pattern.Print(input)
 					}else{
 						fmt.Println("cant draw a circle")
 					}
@@ -131,17 +164,26 @@ func main() {
 					}
 					fmt.Println("provide the width of rectangle")
 					scanner.Scan()
-					height, _ := strconv.Atoi(scanner.Text())
+					width, _ := strconv.Atoi(scanner.Text())
 
 					fmt.Println("provide the length of rectangle")
 					scanner.Scan()
-					breadth, _ := strconv.Atoi(scanner.Text())
+					length, _ := strconv.Atoi(scanner.Text())
 
+					parentRectangle:=pattern.Pattern{
+						Name: "rectangle",
+					}
+					rectObj:=pattern.Rectangle{
+						Pattern: parentRectangle,
+						Point:   pt,
+						Length:  length,
+						Breadth: width,
+					}
+					numberRectangle:=pattern.Info(rectObj,input)
 
-					numberRectangle:=pattern.DrawRectangle(input, pt, height,breadth)
 					if numberRectangle!=-1{
 						fmt.Println("Number of square which can be drawn from that point is ",numberRectangle)
-						print(input)
+						rectObj.Pattern.Print(input)
 					}else{
 						fmt.Println("cant draw a rectangle")
 					}
@@ -164,11 +206,4 @@ func main() {
 
 	}
 
-	func print(input[][]int) {
-		for i := 0; i < len(input); i++ {
-			for j := 0; j < len(input[0]); j++ {
-				fmt.Print(strconv.Itoa(input[i][j]) + "      ")
-			}
-			fmt.Println("\n")
-		}
-	}
+

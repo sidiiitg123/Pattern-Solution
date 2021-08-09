@@ -1,98 +1,51 @@
 package pattern
 
-type Point struct {
-	I int
-	J int
-}
 
-func New(m int, n int) Point {
-	p := Point{
-		I: m,
-		J: n,
-	}
-	return p
-}
 
-func checkInside(p Point, row int, col int) bool {
-	if (p.I >= 0 && p.I <= row) && (p.J >= 0 && p.J <= col) {
-		return true
-	}
-	return false
-}
-
-func makeOne(l int, r int, t int, b int, arr [][]int) [][]int {
-	dir:=0
-	for l <= r && b <= t {
-		if dir == 0 {
-			for i := l; i <= r; i++ {
-				arr[b][i] = 1
-			}
-			b++
-		} else if dir == 1 {
-			for i := b; i <= t; i++ {
-				arr[i][r] = 1
-			}
-			r--
-		} else if dir == 2 {
-			for i := r; i >= l; i-- {
-				arr[t][i] = 1
-			}
-			t--
-		} else if dir == 3 {
-			for i := t; i >= b; i-- {
-				arr[i][l] = 1
-			}
-			l++
-		}
-		dir = (dir + 1) % 4
-	}
-	return arr
-}
-
-func DrawSquare(arr [][]int, p Point, lSquare int) int {
-
-	if p.I<0 || p.I>len(arr)-1 ||p.J<0 || p.J>len(arr[0])-1{
+func (s Square) draw(arr [][]int) int {
+	if s.Point.I < 0 || s.Point.I > len(arr)-1 || s.Point.J < 0 || s.Point.J > len(arr[0])-1 {
 		return -1
 	}
-
-	lMost, rMost, tMost, bMost := p.J-(lSquare), p.J+(lSquare), p.I+(lSquare), p.I-(lSquare)
-
+    r:=s.Rectangle
+	lMost, rMost, tMost, bMost := s.Point.J-(s.SideLength), s.Point.J+(s.SideLength), s.Point.I+(s.SideLength), s.Point.I-(s.SideLength)
+	x:=Check(lMost,rMost,tMost,bMost,arr,r)
+	return x
+}
+func Check(lMost int,rMost int,tMost int,bMost int,arr [][]int,r Rectangle) int {
 	var diagPoint []Point
 	bl := Point{I: bMost, J: lMost}
 	br := Point{I: bMost, J: rMost}
 	tl := Point{I: tMost, J: lMost}
 	tr := Point{I: tMost, J: rMost}
-	if checkInside(bl, len(arr)-1, len(arr[0])-1) {
+	if r.Pattern.CheckInside(bl, len(arr)-1, len(arr[0])-1) {
 		diagPoint = append(diagPoint, bl)
 	}
-	if checkInside(br, len(arr)-1, len(arr[0])-1) {
+	if r.Pattern.CheckInside(br, len(arr)-1, len(arr[0])-1) {
 		diagPoint = append(diagPoint, br)
 	}
-	if checkInside(tl, len(arr)-1, len(arr[0])-1) {
+	if r.Pattern.CheckInside(tl, len(arr)-1, len(arr[0])-1) {
 		diagPoint = append(diagPoint, tl)
 	}
-	if checkInside(tr, len(arr)-1, len(arr[0])-1) {
+	if r.Pattern.CheckInside(tr, len(arr)-1, len(arr[0])-1) {
 		diagPoint = append(diagPoint, tr)
 	}
-	if len(diagPoint)==0{
+	if len(diagPoint) == 0 {
 		return -1
 	}
 
-	for i:=0;i<len(diagPoint);i++{
-		temp:=diagPoint[i]
-		if temp.J<p.J &&temp.I<p.I{//bl diag
-			makeOne(temp.J,p.J,p.I,temp.I,arr)
-		}else if temp.J<p.J &&temp.I>p.I{// tl diag
-			makeOne(temp.J,p.J,temp.I,p.I,arr)
-		}else if temp.J>p.J &&temp.I>p.I{//tr diag
-			makeOne(p.J,temp.J,temp.I,p.I,arr)
-		}else if temp.J>p.J &&temp.I<p.I{//br diag
-			makeOne(p.J,temp.J,p.I,temp.I,arr)
-		}else{
+	for i := 0; i < len(diagPoint); i++ {
+		temp := diagPoint[i]
+		if temp.J < r.Point.J && temp.I < r.Point.I { //bl diag
+			r.Pattern.MakeOne(temp.J, r.Point.J, r.Point.I, temp.I, arr)
+		} else if temp.J < r.Point.J && temp.I > r.Point.I { // tl diag
+			r.Pattern.MakeOne(temp.J, r.Point.J, temp.I, r.Point.I, arr)
+		} else if temp.J > r.Point.J && temp.I > r.Point.I { //tr diag
+			r.Pattern.MakeOne(r.Point.J, temp.J, temp.I, r.Point.I, arr)
+		} else if temp.J > r.Point.J && temp.I < r.Point.I { //br diag
+			r.Pattern.MakeOne(r.Point.J, temp.J, r.Point.I, temp.I, arr)
+		} else {
 			return -1
 		}
 	}
-
-	//fmt.Print(len(diagPoint))
 	return len(diagPoint)
 }
